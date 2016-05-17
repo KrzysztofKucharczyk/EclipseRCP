@@ -21,6 +21,7 @@ import com.eclipsesource.json.JsonValue;
 
 import model.BookModel;
 
+@SuppressWarnings("restriction")
 public class RestServices {
 
 	private final String universalURL = "http://localhost:8080/webstore/rbooks/";

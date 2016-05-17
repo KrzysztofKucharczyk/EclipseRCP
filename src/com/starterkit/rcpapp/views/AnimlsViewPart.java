@@ -1,7 +1,5 @@
 package com.starterkit.rcpapp.views;
 
-import java.util.List;
-
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -19,6 +17,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
+import dialogs.BookDetailsViewPart;
 import model.BookModel;
 import model.BookModelProvider;
 import rest.manager.RestServices;
@@ -69,8 +68,8 @@ public class AnimlsViewPart extends ViewPart {
 		    public void doubleClick(DoubleClickEvent event) {
 		        IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 		        if (selection.isEmpty()) return;
-		       BookModel chosenBook = (BookModel) selection.getFirstElement();
-		       System.out.println(chosenBook.getTitle());
+		       BookDetailsViewPart bookDetailsDialog = new BookDetailsViewPart(null, (BookModel) selection.getFirstElement());
+		       bookDetailsDialog.open();
 		    }
 		});
 	}

@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rcpapp
+Bundle-SymbolicName: com.starterkit.rcpapp;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.starterkit.rcpapp.Activator
+Bundle-Vendor: STARTERKIT
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.apache.commons.io;bundle-version="2.2.0",
+ org.apache.httpcomponents.httpclient;bundle-version="4.3.6",
+ minimal-json;bundle-version="0.9.2",
+ org.apache.httpcomponents.httpcore;bundle-version="4.3.3"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy

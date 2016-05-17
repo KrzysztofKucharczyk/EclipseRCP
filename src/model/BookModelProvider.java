@@ -17,4 +17,7 @@ public enum BookModelProvider {
 		return restServices.getBooks();
 	}
 	
+	public Collection<BookModel> getBooks(String title, String authors) {
+		return restServices.getBooks(title, authors);
+	}
 }

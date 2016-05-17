@@ -32,7 +32,7 @@
             id="com.starterkit.rcpapp.view">
       </view>
       <view
-            class="com.starterkit.rcpapp.views.AnimlsViewPart"
+            class="com.starterkit.rcpapp.views.BookListViewPart"
             id="com.starterkit.rcpapp.animalsview"
             name="animals"
             restorable="true">

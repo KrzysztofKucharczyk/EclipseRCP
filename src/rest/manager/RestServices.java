@@ -45,7 +45,7 @@ public class RestServices {
 				constructHttpGetRequest(generateSearchURL(generateFinalSearchTerms(title, authors))));
 		InputStream body = getResponseBody(response);
 		checkStatusCode(response);
-
+				
 		return convertJSONToBookList(convertRawResponseToJSON(body));
 	}
 

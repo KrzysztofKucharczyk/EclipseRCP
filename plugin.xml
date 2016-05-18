@@ -7,7 +7,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="com.starterkit.rcpapp.Application">
+               class="com.starterkit.library.Application">
          </run>
       </application>
    </extension>
@@ -15,11 +15,11 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="Perspective"
-            class="com.starterkit.rcpapp.Perspective"
+            class="com.starterkit.library.Perspective"
             id="com.starterkit.rcpapp.perspective">
       </perspective>
       <perspective
-            class="com.starterkit.rcpapp.perspectives.ZooPerspectiveFactory"
+            class="com.starterkit.library.perspectives.ZooPerspectiveFactory"
             id="com.starterkit.rcpapp.zooperspective"
             name="Zoo">
       </perspective>
@@ -28,11 +28,11 @@
          point="org.eclipse.ui.views">
       <view
             name="View"
-            class="com.starterkit.rcpapp.View"
+            class="com.starterkit.library.View"
             id="com.starterkit.rcpapp.view">
       </view>
       <view
-            class="com.starterkit.rcpapp.views.BookListViewPart"
+            class="com.starterkit.library.views.BookListViewPart"
             id="com.starterkit.rcpapp.animalsview"
             name="animals"
             restorable="true">

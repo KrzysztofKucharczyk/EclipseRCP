@@ -10,21 +10,23 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
-
-import model.BookModel;
+import com.starterkit.library.models.BookModel;
 
 @SuppressWarnings("restriction")
 public class RestServices {
 
 	private final String universalURL = "http://localhost:8080/webstore/rbooks/";
+	private final String instanceURL = "http://localhost:8080/webstore/rbook/";
 
 	private HttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -36,26 +38,67 @@ public class RestServices {
 		HttpResponse response = sendGet(constructHttpGetRequest(universalURL));
 		InputStream body = getResponseBody(response);
 		checkStatusCode(response);
-
+		System.out.println("GET  ::getBooks  :: == " + response.getStatusLine().getStatusCode());
 		return convertJSONToBookList(convertRawResponseToJSON(body));
 	}
 
 	public Collection<BookModel> getBooks(String title, String authors) {
-		HttpResponse response = sendGet(
-				constructHttpGetRequest(generateSearchURL(generateFinalSearchTerms(title, authors))));
-		InputStream body = getResponseBody(response);
-		checkStatusCode(response);
-				
-		return convertJSONToBookList(convertRawResponseToJSON(body));
+		if (!isNull(title, authors)) {
+			String[] params = new String[2];
+			params[0] = title;
+			params[1] = authors;
+
+			HttpResponse response = sendGet(constructHttpGetRequest(generateSearchURL(params)));
+			InputStream body = getResponseBody(response);
+			checkStatusCode(response);
+			System.out.println("GET  ::getBooks  :: == " + response.getStatusLine().getStatusCode());
+
+			return convertJSONToBookList(convertRawResponseToJSON(body));
+		}
+		return null;
 	}
 
-	public void saveBook(JsonValue json) {
-
+	public void saveBook(BookModel bookModel) {
 		HttpPost request = new HttpPost(universalURL);
 		request.addHeader("content-type", "application/json");
-		request.setEntity(createJSONFromParams(json));
+		request.setEntity(createJSONFromParams(bookModel));
 		HttpResponse response = sendPost(request);
 		checkStatusCode(response);
+		System.out.println("POST ::saveBook  :: == " + response.getStatusLine().getStatusCode());
+		try {
+			EntityUtils.consume(response.getEntity());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	}
+
+	public void updateBook(BookModel bookModel) {
+		HttpPut request = new HttpPut(instanceURL + bookModel.getId());
+		request.addHeader("content-type", "application/json");
+		request.setEntity(createJSONFromParams(bookModel));
+		HttpResponse response = sendPut(request);
+		checkStatusCode(response);
+		System.out.println("PUT  ::updateBook :: == " + response.getStatusLine().getStatusCode());
+		try {
+			EntityUtils.consume(response.getEntity());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void deleteBook(Long id) {
+		HttpResponse response = sendDelete(constructHttpDeleteRequest(instanceURL + "/" + id));
+		checkStatusCode(response);
+		System.out.println("DEL  ::deleteBook:: == " + response.getStatusLine().getStatusCode());
+		try {
+			EntityUtils.consume(response.getEntity());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private HttpResponse sendGet(HttpGet request) {
@@ -76,7 +119,33 @@ public class RestServices {
 		return null;
 	}
 
-	private StringEntity createJSONFromParams(JsonValue json) {
+	private HttpResponse sendPut(HttpPut request) {
+		try {
+			return httpClient.execute(request);
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+
+	private HttpResponse sendDelete(HttpDelete request) {
+		try {
+			return httpClient.execute(request);
+		} catch (IOException e) {
+
+		}
+		return null;
+	}
+
+	private StringEntity createJSONFromParams(BookModel bookModel) {
+
+		JsonObject json = new JsonObject();
+		json.add("title", bookModel.getTitle());
+		json.add("authors", bookModel.getAuthors());
+		json.add("status", bookModel.getStatus());
+		json.add("genre", bookModel.getGenre());
+		json.add("year", bookModel.getYear());
+
 		try {
 			return new StringEntity(json.toString());
 		} catch (UnsupportedEncodingException e) {
@@ -92,6 +161,7 @@ public class RestServices {
 			JsonObject jsonObject = (JsonObject) jsonArray.get(i);
 			String[] preBook = new String[5];
 
+			Long id = jsonObject.get("id").asLong();
 			preBook[0] = jsonObject.get("title").toString();
 			preBook[1] = jsonObject.get("authors").toString();
 			preBook[2] = jsonObject.get("status").toString();
@@ -101,7 +171,7 @@ public class RestServices {
 			for (int j = 0; j < preBook.length; j++)
 				preBook[j] = removeCharacters(preBook[j]);
 
-			books.add(new BookModel(preBook[0], preBook[1], preBook[2], preBook[3], preBook[4]));
+			books.add(new BookModel(id, preBook[0], preBook[1], preBook[2], preBook[3], preBook[4]));
 		}
 
 		return books;
@@ -122,7 +192,7 @@ public class RestServices {
 	}
 
 	private void checkStatusCode(HttpResponse response) {
-
+		// System.out.println(response.getStatusLine().getStatusCode());
 	}
 
 	private InputStream getResponseBody(HttpResponse response) {
@@ -141,22 +211,18 @@ public class RestServices {
 		return request;
 	}
 
-	private String[] generateFinalSearchTerms(String title, String authors) {
+	private HttpDelete constructHttpDeleteRequest(String url) {
+		HttpDelete request = new HttpDelete(url);
+		request.addHeader("content-type", "application/json");
+		return request;
+	}
 
-		if (title == null)
-			title = "";
-
-		if (authors == null)
-			authors = "";
-
-		final String[] result = new String[2];
-		result[0] = new String(title);
-		result[1] = new String(authors);
-
-		return result;
+	private boolean isNull(String title, String authors) {
+		return title == null || authors == null;
 	}
 
 	private String generateSearchURL(String[] searchTerms) {
 		return "http://localhost:8080/webstore/rbooks/search?title=" + searchTerms[0] + "&authors=" + searchTerms[1];
 	}
+
 }

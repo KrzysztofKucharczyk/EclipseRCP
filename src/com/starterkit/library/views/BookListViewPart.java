@@ -24,10 +24,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
+import com.starterkit.library.dialogs.BookAddDialog;
+import com.starterkit.library.dialogs.BookDetailsDialog;
+import com.starterkit.library.dialogs.BookEditDialog;
+import com.starterkit.library.dialogs.BookRemoveConfirmatorDialog;
 import com.starterkit.library.models.BookModel;
 import com.starterkit.library.models.BookModelProvider;
 
-import javafx.scene.control.Toggle;
 import swing2swt.layout.BoxLayout;
 
 public class BookListViewPart extends ViewPart {
@@ -106,7 +109,7 @@ public class BookListViewPart extends ViewPart {
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					BookAddViewPart bookAddView = new BookAddViewPart(null, tableViewer);
+					BookAddDialog bookAddView = new BookAddDialog(null, tableViewer);
 					bookAddView.open();
 					break;
 				}
@@ -118,7 +121,7 @@ public class BookListViewPart extends ViewPart {
 				switch (e.type) {
 				case SWT.Selection:
 					IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-					BookEditViewPart bookEditView = new BookEditViewPart(null, (BookModel) selection.getFirstElement());
+					BookEditDialog bookEditView = new BookEditDialog(null, (BookModel) selection.getFirstElement());
 					bookEditView.open();
 					break;
 				}
@@ -131,7 +134,7 @@ public class BookListViewPart extends ViewPart {
 				case SWT.Selection:
 					IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 
-					BookRemoveConfirmatorViewPart bookRemoveConfirmator = new BookRemoveConfirmatorViewPart(null,
+					BookRemoveConfirmatorDialog bookRemoveConfirmator = new BookRemoveConfirmatorDialog(null,
 							(BookModel) selection.getFirstElement(), tableViewer);
 					bookRemoveConfirmator.open();
 					toggleButtons(true);
@@ -152,7 +155,7 @@ public class BookListViewPart extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 				if (selection.isEmpty())
 					return;
-				BookDetailsViewPart bookDetailsDialog = new BookDetailsViewPart(null,
+				BookDetailsDialog bookDetailsDialog = new BookDetailsDialog(null,
 						(BookModel) selection.getFirstElement());
 				bookDetailsDialog.open();
 			}

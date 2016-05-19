@@ -1,6 +1,7 @@
 package com.starterkit.library.dialogs;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,10 +22,12 @@ public class BookEditDialog extends TitleAreaDialog {
 	private Text addStatusText;
 	private Text addGenreText;
 	private Text addYearText;
-
-	public BookEditDialog(Shell parentShell, BookModel bookModel) {
+	private TableViewer tableViewer;
+	
+	public BookEditDialog(Shell parentShell, BookModel bookModel, TableViewer tableViewer) {
 		super(parentShell);
 		this.bookModel = bookModel;
+		this.tableViewer = tableViewer;
 	}
 
 	@Override
@@ -90,6 +93,7 @@ public class BookEditDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		BookModelProvider.INSTANCE.updateBook(new BookModel(bookModel.getId(), addTitleText.getText(), addAuthorsText.getText(),
 				addStatusText.getText(), addGenreText.getText(), addYearText.getText()));
+		tableViewer.setInput(BookModelProvider.INSTANCE.getBooks());
 		super.okPressed();
 	}
 

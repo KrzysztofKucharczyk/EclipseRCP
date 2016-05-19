@@ -76,15 +76,24 @@ public class RestServices {
 
 	public void updateBook(BookModel bookModel) {
 		HttpPut request = new HttpPut(instanceURL + bookModel.getId());
+		System.err.println(instanceURL + bookModel.getId());
 		request.addHeader("content-type", "application/json");
 		request.setEntity(createJSONFromParams(bookModel));
+		try {
+			System.err.println(request.getEntity().getContent());
+		} catch (IllegalStateException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		HttpResponse response = sendPut(request);
 		checkStatusCode(response);
 		System.out.println("PUT  ::updateBook :: == " + response.getStatusLine().getStatusCode());
 		try {
 			EntityUtils.consume(response.getEntity());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -140,12 +149,13 @@ public class RestServices {
 	private StringEntity createJSONFromParams(BookModel bookModel) {
 
 		JsonObject json = new JsonObject();
+		json.add("id", bookModel.getId());
 		json.add("title", bookModel.getTitle());
 		json.add("authors", bookModel.getAuthors());
 		json.add("status", bookModel.getStatus());
 		json.add("genre", bookModel.getGenre());
 		json.add("year", bookModel.getYear());
-
+		System.out.println(json.toString());
 		try {
 			return new StringEntity(json.toString());
 		} catch (UnsupportedEncodingException e) {

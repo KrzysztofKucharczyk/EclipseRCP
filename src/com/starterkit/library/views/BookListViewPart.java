@@ -122,7 +122,7 @@ public class BookListViewPart extends ViewPart {
 				switch (e.type) {
 				case SWT.Selection:
 					IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-					BookEditDialog bookEditView = new BookEditDialog(null, (BookModel) selection.getFirstElement());
+					BookEditDialog bookEditView = new BookEditDialog(null, (BookModel) selection.getFirstElement(), tableViewer);
 					bookEditView.open();
 					break;
 				}

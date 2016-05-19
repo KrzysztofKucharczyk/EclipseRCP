@@ -1,5 +1,6 @@
 package com.starterkit.library.views;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
@@ -173,6 +175,18 @@ public class BookListViewPart extends ViewPart {
 
 			}
 		});
+		
+		
+		MenuManager menuManager = new MenuManager();
+	    Menu menu = menuManager.createContextMenu(tableViewer.getTable());
+	    // set the menu on the SWT widget
+	    tableViewer.getTable().setMenu(menu);
+	    // register the menu with the framework
+	    getSite().registerContextMenu(menuManager, tableViewer);
+
+	    // make the viewer selection available
+	    getSite().setSelectionProvider(tableViewer);
+		
 	}
 
 	private void toggleButtons(boolean isNoRowSelected) {
@@ -305,7 +319,7 @@ public class BookListViewPart extends ViewPart {
 
 	@Override
 	public void setFocus() {
-
+		tableViewer.getControl().setFocus();
 	}
 
 }

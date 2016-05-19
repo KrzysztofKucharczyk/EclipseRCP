@@ -92,9 +92,40 @@
                tooltip="Delete book by id">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:com.starterkit.library.booklistview">
+         <command
+               commandId="com.starterkit.library.showBookDetailsCommand"
+               label="Show details"
+               style="push">
+         </command>
+         <command
+               commandId="com.starterkit.library.editBookCommand"
+               label="Edit entry"
+               style="push">
+         </command>
+         <command
+               commandId="com.starterkit.library.removeBookCommand"
+               label="Remove entry"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
+      <handler
+            class="com.starterkit.library.handlers.ShowBookDetailsContextMenuHandler"
+            commandId="com.starterkit.library.showBookDetailsCommand">
+      </handler>
+      <handler
+            class="com.starterkit.library.handlers.EditBookContextMenuHandler"
+            commandId="com.starterkit.library.editBookCommand">
+      </handler>
+      <handler
+            class="com.starterkit.library.handlers.RemoveBookContextMenuHandler"
+            commandId="com.starterkit.library.removeBookCommand">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -107,6 +138,10 @@
             defaultHandler="com.starterkit.library.commands.DeleteBookHandler"
             id="com.starterkit.library.deleteBookCommand"
             name="Delete book">
+      </command>
+      <command
+            id="com.starterkit.library.showBookDetailsCommand"
+            name="Show details">
       </command>
    </extension>
 

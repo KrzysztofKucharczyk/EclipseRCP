@@ -76,18 +76,8 @@ public class RestServices {
 
 	public void updateBook(BookModel bookModel) {
 		HttpPut request = new HttpPut(instanceURL + bookModel.getId());
-		System.err.println(instanceURL + bookModel.getId());
 		request.addHeader("content-type", "application/json");
 		request.setEntity(createJSONFromParams(bookModel));
-		try {
-			System.err.println(request.getEntity().getContent());
-		} catch (IllegalStateException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		HttpResponse response = sendPut(request);
 		checkStatusCode(response);
 		System.out.println("PUT  ::updateBook :: == " + response.getStatusLine().getStatusCode());

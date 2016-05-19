@@ -11,7 +11,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 public class View extends ViewPart {
-	public static final String ID = "com.starterkit.rcpapp.view";
+	public static final String ID = "com.starterkit.library.view";
 
 	private TableViewer viewer;
 

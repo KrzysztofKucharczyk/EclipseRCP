@@ -21,7 +21,7 @@
       <perspective
             class="com.starterkit.library.perspectives.ZooPerspectiveFactory"
             id="com.starterkit.rcpapp.zooperspective"
-            name="Zoo">
+            name="Book List">
       </perspective>
    </extension>
    <extension
@@ -34,7 +34,7 @@
       <view
             class="com.starterkit.library.views.BookListViewPart"
             id="com.starterkit.rcpapp.animalsview"
-            name="animals"
+            name="Book list"
             restorable="true">
       </view>
    </extension>
@@ -65,26 +65,54 @@
          <menu
                label="File">
             <command
+                  commandId="com.starterkit.rcpapp.addBookCommand"
+                  label="Add book"
+                  style="push"
+                  tooltip="Adds new book">
+            </command>
+            <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Exit">
             </command>
          </menu>
-         <menu
-               label="My menu">
-            <command
-                  commandId="com.starterkit.rcpapp.singcommand"
-                  label="Adele - Hello"
-                  style="push">
-            </command>
-         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:com.starterkit.rcpapp.animalsview">
+         <toolbar
+               id="Library.booklistviewtoolbar">
+         </toolbar>
+         <command
+               commandId="com.starterkit.rcpapp.addBookCommand"
+               icon="icons/add.gif"
+               label="Add book"
+               style="push"
+               tooltip="Add new book">
+         </command>
+         <command
+               commandId="com.starterkit.rcpapp.deleteBookCommand"
+               icon="icons/minus.gif"
+               label="Delete book"
+               style="push"
+               tooltip="Delete book by id">
+         </command>
       </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
-      <handler
-            class="SingHandler"
-            commandId="com.starterkit.rcpapp.singcommand">
-      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="com.starterkit.library.commands.AddBookHandler"
+            id="com.starterkit.rcpapp.addBookCommand"
+            name="Add book">
+      </command>
+      <command
+            defaultHandler="com.starterkit.library.commands.DeleteBookHandler"
+            id="com.starterkit.rcpapp.deleteBookCommand"
+            name="Delete book">
+      </command>
    </extension>
 
 </plugin>

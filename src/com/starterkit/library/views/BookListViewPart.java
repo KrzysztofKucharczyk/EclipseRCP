@@ -60,8 +60,9 @@ public class BookListViewPart extends ViewPart {
 		parent.setLayout(new GridLayout(2, false));
 
 		composite = new Composite(parent, SWT.NONE);
-
-		new Label(composite, SWT.NONE);
+		
+				lblNewLabel_2 = new Label(composite, SWT.NONE);
+				lblNewLabel_2.setText("Search panel");
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
@@ -93,7 +94,7 @@ public class BookListViewPart extends ViewPart {
 		createColumns(parent, tableViewer);
 		Table table = tableViewer.getTable();
 		GridData gd_table = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
-		gd_table.widthHint = 492;
+		gd_table.widthHint = 525;
 		table.setLayoutData(gd_table);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -190,9 +191,7 @@ public class BookListViewPart extends ViewPart {
 		gd_composite.heightHint = 64;
 		composite.setLayoutData(gd_composite);
 		composite.setLayout(new GridLayout(5, false));
-
-		lblNewLabel_2 = new Label(composite, SWT.NONE);
-		lblNewLabel_2.setText("Search panel");
+		new Label(composite, SWT.NONE);
 		btnFilter = new Button(composite, SWT.NONE);
 		btnFilter.setText("Filter");
 		lblNewLabel = new Label(composite, SWT.NONE);

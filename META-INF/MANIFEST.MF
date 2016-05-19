@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rcpapp
-Bundle-SymbolicName: com.starterkit.rcpapp;singleton:=true
+Bundle-Name: Library
+Bundle-SymbolicName: com.starterkit.library;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.starterkit.library.Activator
 Bundle-Vendor: STARTERKIT

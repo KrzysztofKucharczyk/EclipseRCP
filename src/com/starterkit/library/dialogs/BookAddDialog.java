@@ -1,7 +1,6 @@
 package com.starterkit.library.dialogs;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,11 +20,9 @@ public class BookAddDialog extends TitleAreaDialog {
 	private Text addStatusText;
 	private Text addGenreText;
 	private Text addYearText;
-	private TableViewer tableViewer;
 
-	public BookAddDialog(Shell parentShell, TableViewer tableViewer) {
+	public BookAddDialog(Shell parentShell) {
 		super(parentShell);
-		this.tableViewer = tableViewer;
 	}
 
 	@Override
@@ -87,7 +84,7 @@ public class BookAddDialog extends TitleAreaDialog {
 		
 		BookModelProvider.INSTANCE.saveBook(new BookModel(null, addTitleText.getText(), addAuthorsText.getText(),
 				addStatusText.getText(), addGenreText.getText(), addYearText.getText()));
-		tableViewer.setInput(BookModelProvider.INSTANCE.getBooks());
+		BookModelProvider.INSTANCE.getBooksFromServer();
 		super.okPressed();
 	}
 

@@ -1,7 +1,6 @@
 package com.starterkit.library.dialogs;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -16,11 +15,9 @@ import com.starterkit.library.models.BookModelProvider;
 public class DeleteBookChooserDialog extends TitleAreaDialog {
 
 	private Text bookIdText;
-	private TableViewer tableViewer;
 
-	public DeleteBookChooserDialog(Shell parentShell, TableViewer tableViewer) {
+	public DeleteBookChooserDialog(Shell parentShell) {
 		super(parentShell);
-		this.tableViewer = tableViewer;
 	}
 
 	@Override
@@ -32,7 +29,7 @@ public class DeleteBookChooserDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		
+
 		parent.setToolTipText("Remove book");
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
@@ -51,9 +48,9 @@ public class DeleteBookChooserDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		
+
 		BookModelProvider.INSTANCE.deleteBook(Long.parseLong(bookIdText.getText()));
-		tableViewer.setInput(BookModelProvider.INSTANCE.getBooks());
+		BookModelProvider.INSTANCE.getBooksFromServer();
 		super.okPressed();
 	}
 

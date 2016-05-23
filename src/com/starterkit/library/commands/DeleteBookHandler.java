@@ -11,7 +11,7 @@ public class DeleteBookHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		DeleteBookChooserDialog dbcd = new DeleteBookChooserDialog(null, null);
+		DeleteBookChooserDialog dbcd = new DeleteBookChooserDialog(null);
 		dbcd.open();
 		return null;
 	}

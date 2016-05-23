@@ -35,7 +35,10 @@ public class BookDetailsDialog extends TitleAreaDialog {
 	    Composite container = new Composite(area, SWT.NONE);
 	    container.setLayout(new GridLayout(1, false));
 	    container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+	    
+	    Label lbtId = new Label(container, SWT.NONE);
+	    lbtId.setText("Id: " + bookModel.getId());
+	    
 	    Label lbtTitle = new Label(container, SWT.NONE);
 	    lbtTitle.setText("Title: " + bookModel.getTitle());
 	    

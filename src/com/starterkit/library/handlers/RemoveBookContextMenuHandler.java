@@ -9,7 +9,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.starterkit.library.dialogs.BookEditDialog;
 import com.starterkit.library.dialogs.BookRemoveConfirmatorDialog;
 import com.starterkit.library.models.BookModel;
 
@@ -23,7 +22,7 @@ public class RemoveBookContextMenuHandler extends AbstractHandler {
 			IStructuredSelection strucSelection = (IStructuredSelection) selection;
 			for (Iterator<Object> iterator = strucSelection.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();
-				BookRemoveConfirmatorDialog brcd = new BookRemoveConfirmatorDialog(null, (BookModel) element, null);
+				BookRemoveConfirmatorDialog brcd = new BookRemoveConfirmatorDialog(null, (BookModel) element);
 				brcd.open();
 			}
 		}

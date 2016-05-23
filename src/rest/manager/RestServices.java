@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -34,7 +33,7 @@ public class RestServices {
 
 	}
 
-	public Collection<BookModel> getBooks() {
+	public List<BookModel> getBooks() {
 		HttpResponse response = sendGet(constructHttpGetRequest(universalURL));
 		InputStream body = getResponseBody(response);
 		checkStatusCode(response);
@@ -42,7 +41,7 @@ public class RestServices {
 		return convertJSONToBookList(convertRawResponseToJSON(body));
 	}
 
-	public Collection<BookModel> getBooks(String title, String authors) {
+	public List<BookModel> getBooks(String title, String authors) {
 		if (!isNull(title, authors)) {
 			String[] params = new String[2];
 			params[0] = title;
@@ -71,7 +70,7 @@ public class RestServices {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
 	}
 
 	public void updateBook(BookModel bookModel) {
@@ -139,13 +138,13 @@ public class RestServices {
 	private StringEntity createJSONFromParams(BookModel bookModel) {
 
 		JsonObject json = new JsonObject();
-		json.add("id", bookModel.getId());
+		if (bookModel.getId() != null) 		// add id when update, do not add when new
+			json.add("id", bookModel.getId());
 		json.add("title", bookModel.getTitle());
 		json.add("authors", bookModel.getAuthors());
 		json.add("status", bookModel.getStatus());
 		json.add("genre", bookModel.getGenre());
 		json.add("year", bookModel.getYear());
-		System.out.println(json.toString());
 		try {
 			return new StringEntity(json.toString());
 		} catch (UnsupportedEncodingException e) {

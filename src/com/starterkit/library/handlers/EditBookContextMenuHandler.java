@@ -22,7 +22,7 @@ public class EditBookContextMenuHandler extends AbstractHandler {
 			IStructuredSelection strucSelection = (IStructuredSelection) selection;
 			for (Iterator<Object> iterator = strucSelection.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();
-				BookEditDialog bookEditDialog = new BookEditDialog(null, (BookModel) element, null);
+				BookEditDialog bookEditDialog = new BookEditDialog(null, (BookModel) element);
 				bookEditDialog.open();
 			}
 		}

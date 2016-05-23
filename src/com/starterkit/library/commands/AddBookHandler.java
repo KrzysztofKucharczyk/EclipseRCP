@@ -11,7 +11,7 @@ public class AddBookHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		BookAddDialog bookAddDialog = new BookAddDialog(null, null);
+		BookAddDialog bookAddDialog = new BookAddDialog(null);
 		bookAddDialog.open();
 		return null;
 	}

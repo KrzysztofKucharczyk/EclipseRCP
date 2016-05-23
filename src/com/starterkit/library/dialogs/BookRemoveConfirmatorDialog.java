@@ -1,7 +1,6 @@
 package com.starterkit.library.dialogs;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -16,12 +15,10 @@ import com.starterkit.library.models.BookModelProvider;
 public class BookRemoveConfirmatorDialog extends TitleAreaDialog {
 
 	private BookModel bookModel;
-	private TableViewer tableViewer;
 
-	public BookRemoveConfirmatorDialog(Shell parentShell, BookModel bookModel, TableViewer tableViewer) {
+	public BookRemoveConfirmatorDialog(Shell parentShell, BookModel bookModel) {
 		super(parentShell);
 		this.bookModel = bookModel;
-		this.tableViewer = tableViewer;
 	}
 
 	@Override
@@ -64,7 +61,7 @@ public class BookRemoveConfirmatorDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		BookModelProvider.INSTANCE.deleteBook(bookModel.getId());
-		tableViewer.setInput(BookModelProvider.INSTANCE.getBooks());
+		BookModelProvider.INSTANCE.getBooksFromServer();
 		super.okPressed();
 	}
 

@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+
+import com.starterkit.library.View;
 
 import rest.manager.RestServices;
 
@@ -12,7 +16,8 @@ public enum BookModelProvider {
 	INSTANCE;
 
 	private RestServices restServices = new RestServices();
-
+	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	View view = (View) page.findView("com.starterkit.library.view");
 	private WritableList books = new WritableList(restServices.getBooks(), BookModel.class);
 
 	private BookModelProvider() {
@@ -23,6 +28,9 @@ public enum BookModelProvider {
 			books.clear();
 		List<BookModel> a = restServices.getBooks();
 		books.addAll(a);
+		System.out.println(view.getTitle());
+
+		view.setSourceData();
 	}
 
 	public void getBooksFromServer(String title, String authors) {
@@ -70,7 +78,7 @@ public enum BookModelProvider {
 			}
 
 		}
-		
+
 		if (books != null)
 			books.clear();
 		books.addAll(result);

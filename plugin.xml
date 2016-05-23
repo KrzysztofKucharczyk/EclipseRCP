@@ -22,7 +22,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="View"
+            name="Book Quick View"
             class="com.starterkit.library.View"
             id="com.starterkit.library.view">
       </view>

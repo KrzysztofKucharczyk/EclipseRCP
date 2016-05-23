@@ -1,5 +1,8 @@
 package com.starterkit.library;
 
+import java.util.ArrayList;
+
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -10,13 +13,15 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.starterkit.library.models.BookModel;
+import com.starterkit.library.models.BookModelProvider;
+
 public class View extends ViewPart {
 	public static final String ID = "com.starterkit.library.view";
 
 	private TableViewer viewer;
 
-
-	class ViewLabelProvider extends LabelProvider  {
+	class ViewLabelProvider extends LabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
 		}
@@ -26,8 +31,7 @@ public class View extends ViewPart {
 		}
 
 		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_ELEMENT);
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 	}
 
@@ -36,12 +40,19 @@ public class View extends ViewPart {
 	 * it.
 	 */
 	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		// Provide the input to the ContentProvider
-		viewer.setInput(new String[] {"One", "Two", "Three"});
+		setSourceData();
+	}
+	
+	public void setSourceData() {
+		ArrayList<String> titles = new ArrayList<>();
+		WritableList bookList = (WritableList) BookModelProvider.INSTANCE.getBooks();
+		for (int i = 0; i < bookList.size(); i++)
+			titles.add((((BookModel) bookList.get(i))).getTitle());
+		viewer.setInput(titles);
 	}
 
 	/**

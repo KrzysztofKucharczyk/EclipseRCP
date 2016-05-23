@@ -1,4 +1,4 @@
-package com.starterkit.library;
+package com.starterkit.library.views;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ import org.eclipse.ui.part.ViewPart;
 import com.starterkit.library.models.BookModel;
 import com.starterkit.library.models.BookModelProvider;
 
-public class View extends ViewPart {
+public class BookQuickView extends ViewPart {
 	public static final String ID = "com.starterkit.library.view";
 
 	private TableViewer viewer;

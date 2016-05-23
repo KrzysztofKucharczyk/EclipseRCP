@@ -42,54 +42,81 @@ import swing2swt.layout.BoxLayout;
 
 @SuppressWarnings("deprecation")
 public class BookListViewPart extends ViewPart {
-	private TableViewer tableViewer;
-	private Text titleSearchTerm;
-	private Text authorsSearchTerm;
-	private Composite composite;
-	private Composite composite_1;
-	private GridData gd_composite;
-	private GridData gd_composite_1;
+	private TableViewer bookListTableViewer;
+	private Text titleSearchTextField;
+	private Text authorsSearchTextField;
+	private Composite mainComposite;
+	private Composite operationComposite;
+	private GridData gd_mainComposite;
+	private GridData gd_operationComposite;
 	private GridData gd_text;
-	private GridData gridData;
-	private Label lblNewLabel_2;
-	private Label lblNewLabel;
-	private Label lblNewLabel_1;
+	private GridData tableGridData;
+	private Label searchPanelLabel;
+	private Label searchTitleLabel;
+	private Label searchAuthorsLabel;
 	private Button btnFilter;
 	private Button btnAdd;
 	private Button btnEdit;
 	private Button btnDelete;
 	private Button btnGetAllBooks;
+	private MenuManager menuManager;
+	private Menu menu;
 
 	public BookListViewPart() {
-
-	}
-
-	private DataBindingContext initDataSource() {
-		DataBindingContext bindingContext = new DataBindingContext();
-		ObservableListContentProvider listContentProvider = new ObservableListContentProvider();
-		IObservableMap[] observeMaps = PojoObservables.observeMaps(listContentProvider.getKnownElements(),
-				BookModel.class, new String[] { "title", "authors", "status" });
-
-		tableViewer.setLabelProvider(new ObservableMapLabelProvider(observeMaps));
-		tableViewer.setContentProvider(listContentProvider);
-		tableViewer.setInput(BookModelProvider.INSTANCE.getBooks());
-
-		return bindingContext;
 
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(2, false));
-		composite = new Composite(parent, SWT.NONE);
+		mainComposite = new Composite(parent, SWT.NONE);
 
-		lblNewLabel_2 = new Label(composite, SWT.NONE);
-		lblNewLabel_2.setText("Search panel");
-		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
+		searchPanelLabel = new Label(mainComposite, SWT.NONE);
+		searchPanelLabel.setText("Search panel");
+		new Label(mainComposite, SWT.NONE);
+		new Label(mainComposite, SWT.NONE);
+		new Label(mainComposite, SWT.NONE);
 		initializeSearchComposite();
 
+		new Label(parent, SWT.NONE);
+
+		bookListTableViewer = new TableViewer(parent,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		createColumns(parent, bookListTableViewer);
+		Table table = bookListTableViewer.getTable();
+		GridData gd_table = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
+		gd_table.widthHint = 525;
+		table.setLayoutData(gd_table);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		bookListTableViewer.setContentProvider(ArrayContentProvider.getInstance());
+
+		initDataSource();
+		getSite().setSelectionProvider(bookListTableViewer);
+
+		operationComposite = new Composite(parent, SWT.NONE);
+		initializeOperationComposite();
+
+		initializeAddButton();
+		initializeEditButton();
+		initializeDeleteButton();
+		btnGetAllBooks.addSelectionListener(new SelectionListener() {
+		
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				parent.getDisplay().asyncExec(new Runnable() {
+					
+					@Override
+					public void run() {
+						BookModelProvider.INSTANCE.getBooksFromServer();
+					}
+				});
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 		btnFilter.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -108,26 +135,55 @@ public class BookListViewPart extends ViewPart {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-
+	
+		
 		new Label(parent, SWT.NONE);
+		toggleButtons(true);
+		tableGridData = new GridData();
+		initializeTableGrid();
 
-		tableViewer = new TableViewer(parent,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		createColumns(parent, tableViewer);
-		Table table = tableViewer.getTable();
-		GridData gd_table = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
-		gd_table.widthHint = 525;
-		table.setLayoutData(gd_table);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		initializeDoubleClickTableViewer();
+		intializeSelectionForTableViewer();
 
-		initDataSource();
-		getSite().setSelectionProvider(tableViewer);
+		menuManager = new MenuManager();
+		menu = menuManager.createContextMenu(bookListTableViewer.getTable());
+		bookListTableViewer.getTable().setMenu(menu);
+		getSite().registerContextMenu(menuManager, bookListTableViewer);
 
-		composite_1 = new Composite(parent, SWT.NONE);
-		initializeOperationComposite();
+		// make the viewer selection available
+		getSite().setSelectionProvider(bookListTableViewer);
 
+	}
+ 
+	private void intializeSelectionForTableViewer() {
+		bookListTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				toggleButtons(false);
+				IStructuredSelection selection = (IStructuredSelection) bookListTableViewer.getSelection();
+				if (selection.isEmpty())
+					return;
+
+			}
+		});
+	}
+	
+	private void initializeDoubleClickTableViewer() {
+		bookListTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) bookListTableViewer.getSelection();
+				if (selection.isEmpty())
+					return;
+				BookDetailsDialog bookDetailsDialog = new BookDetailsDialog(null,
+						(BookModel) selection.getFirstElement());
+				bookDetailsDialog.open();
+			}
+		});
+	}
+	
+	private void initializeAddButton() {
 		btnAdd.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.type) {
@@ -138,24 +194,28 @@ public class BookListViewPart extends ViewPart {
 				}
 			}
 		});
-
+	}
+	
+	private void initializeEditButton() {
 		btnEdit.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+					IStructuredSelection selection = (IStructuredSelection) bookListTableViewer.getSelection();
 					BookEditDialog bookEditView = new BookEditDialog(null, (BookModel) selection.getFirstElement());
 					bookEditView.open();
 					break;
 				}
 			}
 		});
-
+	}
+	
+	private void initializeDeleteButton() {
 		btnDelete.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+					IStructuredSelection selection = (IStructuredSelection) bookListTableViewer.getSelection();
 
 					BookRemoveConfirmatorDialog bookRemoveConfirmator = new BookRemoveConfirmatorDialog(null,
 							(BookModel) selection.getFirstElement());
@@ -166,65 +226,22 @@ public class BookListViewPart extends ViewPart {
 			}
 
 		});
+	}
+	
+	private DataBindingContext initDataSource() {
+		DataBindingContext bindingContext = new DataBindingContext();
+		ObservableListContentProvider listContentProvider = new ObservableListContentProvider();
+		IObservableMap[] observeMaps = PojoObservables.observeMaps(listContentProvider.getKnownElements(),
+				BookModel.class, new String[] { "title", "authors", "status" });
 
-		btnGetAllBooks.addSelectionListener(new SelectionListener() {
-		
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				parent.getDisplay().asyncExec(new Runnable() {
-					
-					@Override
-					public void run() {
-						BookModelProvider.INSTANCE.getBooksFromServer();
-					}
-				});
-			}
+		bookListTableViewer.setLabelProvider(new ObservableMapLabelProvider(observeMaps));
+		bookListTableViewer.setContentProvider(listContentProvider);
+		bookListTableViewer.setInput(BookModelProvider.INSTANCE.getBooks());
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
-		new Label(parent, SWT.NONE);
-
-		toggleButtons(true);
-		gridData = new GridData();
-		initializeTableGrid();
-
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-				if (selection.isEmpty())
-					return;
-				BookDetailsDialog bookDetailsDialog = new BookDetailsDialog(null,
-						(BookModel) selection.getFirstElement());
-				bookDetailsDialog.open();
-			}
-		});
-
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				toggleButtons(false);
-				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-				if (selection.isEmpty())
-					return;
-
-			}
-		});
-
-		MenuManager menuManager = new MenuManager();
-		Menu menu = menuManager.createContextMenu(tableViewer.getTable());
-		tableViewer.getTable().setMenu(menu);
-		getSite().registerContextMenu(menuManager, tableViewer);
-
-		// make the viewer selection available
-		getSite().setSelectionProvider(tableViewer);
+		return bindingContext;
 
 	}
-
+	
 	private void toggleButtons(boolean isNoRowSelected) {
 		if (isNoRowSelected) {
 			btnEdit.setEnabled(false);
@@ -236,62 +253,62 @@ public class BookListViewPart extends ViewPart {
 	}
 
 	private void initializeSearchComposite() {
-		gd_composite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_composite.widthHint = 548;
-		gd_composite.heightHint = 64;
-		composite.setLayoutData(gd_composite);
-		composite.setLayout(new GridLayout(5, false));
-		new Label(composite, SWT.NONE);
-		btnFilter = new Button(composite, SWT.NONE);
+		gd_mainComposite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_mainComposite.widthHint = 548;
+		gd_mainComposite.heightHint = 64;
+		mainComposite.setLayoutData(gd_mainComposite);
+		mainComposite.setLayout(new GridLayout(5, false));
+		new Label(mainComposite, SWT.NONE);
+		btnFilter = new Button(mainComposite, SWT.NONE);
 		btnFilter.setText("Filter");
-		lblNewLabel = new Label(composite, SWT.NONE);
-		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel.setText("Title:");
+		searchTitleLabel = new Label(mainComposite, SWT.NONE);
+		searchTitleLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		searchTitleLabel.setText("Title:");
 
-		titleSearchTerm = new Text(composite, SWT.BORDER);
+		titleSearchTextField = new Text(mainComposite, SWT.BORDER);
 		gd_text = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_text.widthHint = 64;
-		titleSearchTerm.setLayoutData(gd_text);
+		titleSearchTextField.setLayoutData(gd_text);
 
-		lblNewLabel_1 = new Label(composite, SWT.NONE);
-		lblNewLabel_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel_1.setText("Authors:");
+		searchAuthorsLabel = new Label(mainComposite, SWT.NONE);
+		searchAuthorsLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		searchAuthorsLabel.setText("Authors:");
 
-		authorsSearchTerm = new Text(composite, SWT.BORDER);
-		authorsSearchTerm.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		authorsSearchTextField = new Text(mainComposite, SWT.BORDER);
+		authorsSearchTextField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 	}
 
 	private void initializeOperationComposite() {
-		composite_1.setLayout(new BoxLayout(BoxLayout.X_AXIS));
-		gd_composite_1 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_composite_1.heightHint = 104;
-		gd_composite_1.widthHint = 528;
-		composite_1.setLayoutData(gd_composite_1);
+		operationComposite.setLayout(new BoxLayout(BoxLayout.X_AXIS));
+		gd_operationComposite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_operationComposite.heightHint = 104;
+		gd_operationComposite.widthHint = 528;
+		operationComposite.setLayoutData(gd_operationComposite);
 
-		btnAdd = new Button(composite_1, SWT.NONE);
+		btnAdd = new Button(operationComposite, SWT.NONE);
 		btnAdd.setText("Add");
 
-		btnEdit = new Button(composite_1, SWT.NONE);
+		btnEdit = new Button(operationComposite, SWT.NONE);
 		btnEdit.setText("Edit");
 
-		btnDelete = new Button(composite_1, SWT.NONE);
+		btnDelete = new Button(operationComposite, SWT.NONE);
 		btnDelete.setText("Delete");
 
-		btnGetAllBooks = new Button(composite_1, SWT.NONE);
+		btnGetAllBooks = new Button(operationComposite, SWT.NONE);
 		btnGetAllBooks.setText("Get all books");
 	}
 
 	private void initializeTableGrid() {
-		gridData.verticalAlignment = GridData.BEGINNING;
-		gridData.horizontalSpan = 2;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.horizontalAlignment = GridData.FILL_HORIZONTAL;
+		tableGridData.verticalAlignment = GridData.BEGINNING;
+		tableGridData.horizontalSpan = 2;
+		tableGridData.grabExcessHorizontalSpace = true;
+		tableGridData.grabExcessVerticalSpace = true;
+		tableGridData.horizontalAlignment = GridData.FILL_HORIZONTAL;
 	}
 
 	private void buttonFilterAction() {
-		if (titleSearchTerm.getText().length() > 0 || authorsSearchTerm.getText().length() > 0)
-			BookModelProvider.INSTANCE.getBooksFromServer(titleSearchTerm.getText(), authorsSearchTerm.getText());
+		if (titleSearchTextField.getText().length() > 0 || authorsSearchTextField.getText().length() > 0)
+			BookModelProvider.INSTANCE.getBooksFromServer(titleSearchTextField.getText(), authorsSearchTextField.getText());
 	}
 
 	private void createColumns(final Composite parent, final TableViewer viewer) {
@@ -327,7 +344,7 @@ public class BookListViewPart extends ViewPart {
 	}
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		final TableViewerColumn viewerColumn = new TableViewerColumn(bookListTableViewer, SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();
 		column.setText(title);
 		column.setWidth(bound);
@@ -338,7 +355,7 @@ public class BookListViewPart extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		tableViewer.getControl().setFocus();
+		bookListTableViewer.getControl().setFocus();
 	}
 
 }

@@ -191,7 +191,7 @@ public class RestServices {
 	}
 
 	private void checkStatusCode(HttpResponse response) {
-		// System.out.println(response.getStatusLine().getStatusCode());
+
 	}
 
 	private InputStream getResponseBody(HttpResponse response) {

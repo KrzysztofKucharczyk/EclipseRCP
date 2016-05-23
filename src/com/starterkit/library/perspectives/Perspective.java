@@ -1,4 +1,4 @@
-package com.starterkit.library;
+package com.starterkit.library.perspectives;
 
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;

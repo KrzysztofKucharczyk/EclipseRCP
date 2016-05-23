@@ -23,7 +23,7 @@
          point="org.eclipse.ui.views">
       <view
             name="Book Quick View"
-            class="com.starterkit.library.View"
+            class="com.starterkit.library.views.BookQuickView"
             id="com.starterkit.library.view">
       </view>
       <view
